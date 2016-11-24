@@ -82,13 +82,11 @@ namespace TFSBuildNotifier
                     foreach (var contextMenuItem in _contextMenu.Items)
                     {
                         var menuItem = contextMenuItem as MenuItem;
-                        if (menuItem != null)
+                        if (menuItem == null) continue;
+                        var tag = menuItem.Tag as Uri;
+                        if (tag != null && tag == oldStatus.Key)
                         {
-                            var tag = menuItem.Tag as Uri;
-                            if (tag != null && tag == oldStatus.Key)
-                            {
-                                menuItem.Icon = ResourceHelper.GetIcon(newStatus);
-                            }
+                            menuItem.Icon = ResourceHelper.GetIcon(newStatus);
                         }
                     }
                 }
@@ -119,11 +117,14 @@ namespace TFSBuildNotifier
             }
         }
 
-
         private void ItemOnClick(object sender, RoutedEventArgs e)
         {
-            //TODO Find correct link from buildstatuses!
-            Process.Start("http://www.google.dk");
+            var menuItem = sender as MenuItem;
+            if (menuItem == null) return;
+            var uri = menuItem.Tag as Uri;
+            if (uri == null) return;
+            var link = _buildStatuses.Where(b => b.Key == uri).Select(b => b.Link).Single();
+            Process.Start(link.ToString());
         }
 
         private void BuildTaskBarIcon()
