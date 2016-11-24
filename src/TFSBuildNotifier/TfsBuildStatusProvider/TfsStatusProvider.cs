@@ -16,6 +16,7 @@ namespace TFSBuildNotifier.TfsBuildStatusProvider
             {
                 var buildStatus = new BuildStatus();
                 buildStatus.Key = uri;
+                buildStatus.BuildId = 0;
                 buildStatus.Status = Status.Undetermined;
                 buildStatus.BuildName = "N/A";
                 buildStatus.RequestedBy = "Unknown";

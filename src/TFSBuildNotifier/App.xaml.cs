@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -11,13 +12,15 @@ using TFSBuildNotifier.TfsBuildStatusProvider;
 
 namespace TFSBuildNotifier
 {
-    public partial class App : Application
+    public partial class App
     {
         private bool _isExit;
         private TaskbarIcon _taskbarIcon;
         private ContextMenu _contextMenu = new ContextMenu();
-        private List<BuildStatus> _buildStatuses;
         private readonly DispatcherTimer _dispatcherTimer = new DispatcherTimer();
+
+        private List<BuildStatus> _buildStatuses;
+        private List<Uri> _uriList = new List<Uri>();
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -26,24 +29,25 @@ namespace TFSBuildNotifier
             MainWindow.Closing += MainWindow_Closing;
             BuildTaskBarIcon();
             IBuildStatusProvider statusProvider;
-#if DEBUG
+            //TODO Use prod provider
             statusProvider = new DebugStatusProvider();
-#else
-#endif
-            var uriList = new List<Uri>();
+            if (e.Args.Length == 0)
+            {
+                MessageBox.Show("Invalid command line", "TFS Build Notifier", MessageBoxButton.OK);
+            }
             try
             {
                 foreach (var arg in e.Args)
                 {
-                    uriList.Add(new Uri(arg));
+                    _uriList.Add(new Uri(arg));
                 }
             }
             catch (Exception)
             {
-                MessageBox.Show("Invalid command line");
+                MessageBox.Show("Invalid command line", "TFS Build Notifier", MessageBoxButton.OK);
             }
 
-            AddMenuItems(statusProvider, uriList);
+            AddMenuItems(statusProvider, _uriList);
             StartTimer();
         }
 
@@ -58,17 +62,40 @@ namespace TFSBuildNotifier
         {
             _dispatcherTimer.Stop();
 
-            //TODO In timer event 
-            //- Get status for each Url
-            // Enumerate menu items
-            // If BuildId for the Key is different, show Baloon
-            // Update menu items with new icon if required
-            // Save new status in _buildStatuses
+            //TODO Use prod provider
+            var statusProvider = new DebugStatusProvider();
+            var latestStatuses = statusProvider.GetStatusList(_uriList);
 
-            var title = _buildStatuses[0].BuildName;
-            var text = _buildStatuses[0].RequestedBy;
-            _taskbarIcon.ShowBalloonTip(title, text, ResourceHelper.GetIcon(_buildStatuses[0]));
+            foreach (var newStatus in latestStatuses)
+            {
+                var oldStatus = _buildStatuses.Single(b => b.Key == newStatus.Key);
+                if (newStatus.BuildId != oldStatus.BuildId)
+                {
+                    var title = newStatus.BuildName;
+                    var text = newStatus.RequestedBy;
+                    _taskbarIcon.ShowBalloonTip(title, text, ResourceHelper.GetIcon(newStatus));
+                }
 
+                //Update the Menu Item icon if status has changed
+                if (oldStatus.Status != newStatus.Status)
+                {
+                    foreach (var contextMenuItem in _contextMenu.Items)
+                    {
+                        var menuItem = contextMenuItem as MenuItem;
+                        if (menuItem != null)
+                        {
+                            var tag = menuItem.Tag as Uri;
+                            if (tag != null && tag == oldStatus.Key)
+                            {
+                                menuItem.Icon = ResourceHelper.GetIcon(newStatus);
+                            }
+                        }
+                    }
+                }
+                oldStatus.Status = newStatus.Status;
+                oldStatus.BuildId = newStatus.BuildId;
+                oldStatus.RequestedBy = newStatus.RequestedBy;
+            }
             _dispatcherTimer.Start();
         }
 
@@ -95,6 +122,7 @@ namespace TFSBuildNotifier
 
         private void ItemOnClick(object sender, RoutedEventArgs e)
         {
+            //TODO Find correct link from buildstatuses!
             Process.Start("http://www.google.dk");
         }
 
