@@ -28,9 +28,7 @@ namespace TFSBuildNotifier
             MainWindow = new MainWindow();
             MainWindow.Closing += MainWindow_Closing;
             BuildTaskBarIcon();
-            IBuildStatusProvider statusProvider;
-            //TODO Use prod provider
-            statusProvider = new DebugStatusProvider();
+            var statusProvider = new TfsStatusProvider();
             if (e.Args.Length == 0)
             {
                 MessageBox.Show("Invalid command line", "TFS Build Notifier", MessageBoxButton.OK);
@@ -62,8 +60,7 @@ namespace TFSBuildNotifier
         {
             _dispatcherTimer.Stop();
 
-            //TODO Use prod provider
-            var statusProvider = new DebugStatusProvider();
+            var statusProvider = new TfsStatusProvider();
             var latestStatuses = statusProvider.GetStatusList(_uriList);
 
             foreach (var newStatus in latestStatuses)
