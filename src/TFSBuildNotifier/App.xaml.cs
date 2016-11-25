@@ -115,7 +115,7 @@ namespace TFSBuildNotifier
 
         private static string BuildMenuItemHeader(BuildStatus buildStatus)
         {
-            return string.Format("{0} - {1} {2} ({3} sec)", buildStatus.BuildName, buildStatus.RequestedBy, buildStatus.BuildDateTime.ToString("HH:mm"), buildStatus.BuildTime.ToString("F0"));
+            return string.Format("{0} - {1} {2} {3} ({4} sec)", buildStatus.BuildName, buildStatus.RequestedBy, buildStatus.BuildDateTime.ToString("HH:mm"), buildStatus.BuildDateTime.ToShortDateString(), buildStatus.BuildTime.ToString("F0"));
         }
 
         private void ItemOnClick(object sender, RoutedEventArgs e)
