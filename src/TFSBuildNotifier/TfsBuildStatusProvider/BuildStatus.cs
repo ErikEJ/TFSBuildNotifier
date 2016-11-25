@@ -10,5 +10,7 @@ namespace TFSBuildNotifier.TfsBuildStatusProvider
         public int BuildId { get; set; }
         public string RequestedBy { get; set; }
         public Status Status { get; set; }
+        public DateTime BuildDateTime { get; set; }
+        public double BuildTime { get; set; }
     }
 }

@@ -83,7 +83,7 @@ namespace TFSBuildNotifier
                         {
                             Source = new BitmapImage(new Uri(imageName, UriKind.Relative))
                         };
-                        menuItem.Header = string.Format("{0} - {1}", newStatus.BuildName, newStatus.RequestedBy);
+                        menuItem.Header = BuildMenuItemHeader(newStatus);
                     }
                 }
                 oldStatus.Status = newStatus.Status;
@@ -105,12 +105,17 @@ namespace TFSBuildNotifier
                     {
                         Source = new BitmapImage(new Uri(imageName, UriKind.Relative))
                     },
-                    Header = string.Format("{0} - {1}", buildStatus.BuildName, buildStatus.RequestedBy),
+                    Header = BuildMenuItemHeader(buildStatus),
                     Tag = buildStatus.Key
                 };
                 item.Click += ItemOnClick;
                 _contextMenu.Items.Insert(0, item);
             }
+        }
+
+        private static string BuildMenuItemHeader(BuildStatus buildStatus)
+        {
+            return string.Format("{0} - {1} {2} ({3} sec)", buildStatus.BuildName, buildStatus.RequestedBy, buildStatus.BuildDateTime.ToString("HH:mm"), buildStatus.BuildTime.ToString("F0"));
         }
 
         private void ItemOnClick(object sender, RoutedEventArgs e)

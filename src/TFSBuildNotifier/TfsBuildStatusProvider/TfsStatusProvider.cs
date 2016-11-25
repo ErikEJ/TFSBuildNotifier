@@ -32,7 +32,9 @@ namespace TFSBuildNotifier.TfsBuildStatusProvider
                     buildStatus.BuildName = response.value[0].definition.name;
                     buildStatus.RequestedBy = response.value[0].requestedBy.displayName;
                     buildStatus.Link = new Uri(response.value[0]._links.web.href);
-                    
+                    buildStatus.BuildDateTime = response.value[0].finishTime.ToLocalTime();
+                    var startTime = response.value[0].startTime.ToLocalTime();
+                    buildStatus.BuildTime = (buildStatus.BuildDateTime- startTime).TotalSeconds;
                     var status = response.value[0].result;                    
                     if (status != "succeeded")
                     {
