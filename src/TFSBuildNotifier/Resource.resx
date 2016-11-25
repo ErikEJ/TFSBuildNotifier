@@ -121,4 +121,13 @@
   <data name="BuildSolution" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\BuildSolution.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="StatusCriticalError" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\StatusCriticalError.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="StatusHelp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\StatusHelp.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="StatusOK" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\StatusOK.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

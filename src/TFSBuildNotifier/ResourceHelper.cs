@@ -1,4 +1,5 @@
-﻿using Hardcodet.Wpf.TaskbarNotification;
+﻿using System.Drawing;
+using Hardcodet.Wpf.TaskbarNotification;
 using TFSBuildNotifier.TfsBuildStatusProvider;
 
 namespace TFSBuildNotifier
@@ -22,19 +23,19 @@ namespace TFSBuildNotifier
             return imageName;
         }
 
-        public static BalloonIcon GetIcon(BuildStatus buildStatus)
+        public static Icon GetIcon(BuildStatus buildStatus)
         {
-            var icon = BalloonIcon.None;
+            var icon = Resource.BuildSolution;
             switch (buildStatus.Status)
             {
                 case Status.Error:
-                    icon = BalloonIcon.Error;
+                    icon = Resource.StatusCriticalError;
                     break;
                 case Status.Success:
-                    icon = BalloonIcon.Info;
+                    icon = Resource.StatusOK;
                     break;
                 case Status.Undetermined:
-                    icon = BalloonIcon.None;
+                    icon = Resource.StatusHelp;
                     break;
             }
             return icon;

@@ -27,11 +27,12 @@ namespace TFSBuildNotifier.TfsBuildStatusProvider
                     var body = GetJsonPayload(uri);
                     var response = JsonConvert.DeserializeObject<Rootobject>(body);
 
-                    buildStatus.Link = new Uri(response.value[0]._links.web.href);
+                    buildStatus.BuildId = response.value[0].id;
+                    buildStatus.Status = Status.Success;
                     buildStatus.BuildName = response.value[0].definition.name;
                     buildStatus.RequestedBy = response.value[0].requestedBy.displayName;
-                    buildStatus.Status = Status.Success;
-
+                    buildStatus.Link = new Uri(response.value[0]._links.web.href);
+                    
                     var status = response.value[0].result;                    
                     if (status != "succeeded")
                     {
