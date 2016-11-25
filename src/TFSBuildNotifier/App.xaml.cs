@@ -16,11 +16,11 @@ namespace TFSBuildNotifier
     {
         private bool _isExit;
         private TaskbarIcon _taskbarIcon;
-        private ContextMenu _contextMenu = new ContextMenu();
+        private readonly ContextMenu _contextMenu = new ContextMenu();
         private readonly DispatcherTimer _dispatcherTimer = new DispatcherTimer();
 
         private List<BuildStatus> _buildStatuses;
-        private List<Uri> _uriList = new List<Uri>();
+        private readonly List<Uri> _uriList = new List<Uri>();
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -70,21 +70,20 @@ namespace TFSBuildNotifier
                 {
                     var title = newStatus.BuildName;
                     var text = newStatus.RequestedBy;
-                    _taskbarIcon.ShowBalloonTip(title, text, ResourceHelper.GetIcon(newStatus));
-                }
-
-                //Update the Menu Item icon if status has changed
-                if (oldStatus.Status != newStatus.Status)
-                {
+                    _taskbarIcon.ShowBalloonTip(title, text, ResourceHelper.GetIcon(newStatus), true);
+                    //Update the Menu Item 
                     foreach (var contextMenuItem in _contextMenu.Items)
                     {
                         var menuItem = contextMenuItem as MenuItem;
-                        if (menuItem == null) continue;
-                        var tag = menuItem.Tag as Uri;
-                        if (tag != null && tag == oldStatus.Key)
+                        var tag = menuItem?.Tag as Uri;
+                        if (tag == null || tag != oldStatus.Key) continue;
+
+                        var imageName = ResourceHelper.GetImageName(newStatus);
+                        menuItem.Icon = new Image
                         {
-                            menuItem.Icon = ResourceHelper.GetIcon(newStatus);
-                        }
+                            Source = new BitmapImage(new Uri(imageName, UriKind.Relative))
+                        };
+                        menuItem.Header = string.Format("{0} - {1}", newStatus.BuildName, newStatus.RequestedBy);
                     }
                 }
                 oldStatus.Status = newStatus.Status;
@@ -117,8 +116,7 @@ namespace TFSBuildNotifier
         private void ItemOnClick(object sender, RoutedEventArgs e)
         {
             var menuItem = sender as MenuItem;
-            if (menuItem == null) return;
-            var uri = menuItem.Tag as Uri;
+            var uri = menuItem?.Tag as Uri;
             if (uri == null) return;
             var link = _buildStatuses.Where(b => b.Key == uri).Select(b => b.Link).Single();
             Process.Start(link.ToString());

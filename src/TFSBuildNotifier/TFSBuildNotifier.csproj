@@ -127,6 +127,8 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="readme.txt" />
+    <Resource Include="Resources\StatusCriticalError.ico" />
+    <Resource Include="Resources\StatusHelp.ico" />
     <Content Include="Resources\StatusHelp_256x.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -135,6 +137,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\StatusOK.ico" />
     <Content Include="Resources\StatusOK_256x.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

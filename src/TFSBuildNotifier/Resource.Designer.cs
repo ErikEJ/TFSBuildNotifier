@@ -69,5 +69,35 @@ namespace TFSBuildNotifier {
                 return ((System.Drawing.Icon)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon StatusCriticalError {
+            get {
+                object obj = ResourceManager.GetObject("StatusCriticalError", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon StatusHelp {
+            get {
+                object obj = ResourceManager.GetObject("StatusHelp", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon StatusOK {
+            get {
+                object obj = ResourceManager.GetObject("StatusOK", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
     }
 }
