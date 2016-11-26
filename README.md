@@ -8,5 +8,5 @@ Sample command line:
 
 (You can have multiple Urls on the command line, separated by spaces)
 
-## Latest version of the application
+## Latest daily build (alpha!)
 You can download a .zip file with the [latest build of the master branch from AppVeyor](https://ci.appveyor.com/api/projects/ErikEJ/TFSBuildNotifier/artifacts/TfsBuildNotifier.zip?branch=master)
