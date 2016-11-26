@@ -66,10 +66,16 @@ namespace TFSBuildNotifier
 
             if (rk == null) return;
             if (isChecked)
+            {
                 // ReSharper disable once AssignNullToNotNullAttribute
-                rk.SetValue(ResourceHelper.AppName, Assembly.GetExecutingAssembly().Location);
+                //TODO Include command line args 
+                var cmdLineArgs = Environment.GetCommandLineArgs();
+                rk.SetValue(ResourceHelper.AppName, "\"" + Assembly.GetExecutingAssembly().Location + "\" ");
+            }
             else
+            {
                 rk.DeleteValue(ResourceHelper.AppName, false);
+            }
         }
 
         private static string BuildMenuItemHeader(BuildStatus buildStatus)
