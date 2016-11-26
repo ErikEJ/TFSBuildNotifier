@@ -9,6 +9,18 @@ namespace TFSBuildNotifier.TfsBuildStatusProvider
 {
     class TfsStatusProvider : IBuildStatusProvider
     {
+        private readonly HttpClient _httpClient;
+
+        public TfsStatusProvider()
+        {
+            _httpClient = new HttpClient(
+                new HttpClientHandler
+                {
+                    Credentials = CredentialCache.DefaultNetworkCredentials,
+                    UseDefaultCredentials = true
+                }) { Timeout = new TimeSpan(0, 0, 10) };
+        }
+
         public List<BuildStatus> GetStatusList(List<Uri> uriList)
         {
             var result = new List<BuildStatus>();
@@ -26,6 +38,7 @@ namespace TFSBuildNotifier.TfsBuildStatusProvider
                 {
                     var body = GetJsonPayload(uri);
                     var response = JsonConvert.DeserializeObject<Rootobject>(body);
+                    //https://www.visualstudio.com/en-us/docs/integrate/api/build/builds
 
                     buildStatus.BuildId = response.value[0].id;
                     buildStatus.Status = Status.Success;
@@ -36,12 +49,14 @@ namespace TFSBuildNotifier.TfsBuildStatusProvider
                     var startTime = response.value[0].startTime.ToLocalTime();
                     buildStatus.BuildTime = (buildStatus.BuildDateTime- startTime).TotalSeconds;
                     var status = response.value[0].result;                    
-                    if (status != "succeeded")
+                    if (status == "succeeded")
                     {
                         buildStatus.Status = Status.Error;
                     }
-                    //TODO Do more granular status?
-                    //https://www.visualstudio.com/en-us/docs/integrate/api/build/builds
+                    if (status == "partiallySucceeded" || status == "canceled")
+                    {
+                        buildStatus.Status = Status.Undetermined;
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -54,13 +69,7 @@ namespace TFSBuildNotifier.TfsBuildStatusProvider
 
         private string GetJsonPayload(Uri url)
         {
-            var client = new HttpClient(new HttpClientHandler
-            {
-                Credentials = CredentialCache.DefaultNetworkCredentials,
-                UseDefaultCredentials = true
-            });
-            client.Timeout = new TimeSpan(0,0, 10);
-            var response = client.GetAsync(url).Result;
+            var response = _httpClient.GetAsync(url).Result;
             response.EnsureSuccessStatusCode();
             return response.Content.ReadAsStringAsync().Result;
         }

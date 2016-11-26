@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 using TFSBuildNotifier.TfsBuildStatusProvider;
-using System.Windows;
 
 namespace TFSBuildNotifier
 {
@@ -67,10 +64,20 @@ namespace TFSBuildNotifier
             if (rk == null) return;
             if (isChecked)
             {
-                // ReSharper disable once AssignNullToNotNullAttribute
-                //TODO Include command line args 
+                //TODO Construct from config eventually
                 var cmdLineArgs = Environment.GetCommandLineArgs();
-                rk.SetValue(ResourceHelper.AppName, "\"" + Assembly.GetExecutingAssembly().Location + "\" ");
+                var args = string.Empty;
+                var first = true;
+                foreach (var cmdLineArg in cmdLineArgs)
+                {
+                    if (first)
+                    {
+                        first = false;
+                        continue;
+                    }
+                    args += "\"" + cmdLineArg + "\" ";
+                }
+                rk.SetValue(ResourceHelper.AppName, "\"" + Assembly.GetExecutingAssembly().Location + "\" " + args);
             }
             else
             {
