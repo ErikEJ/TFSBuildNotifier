@@ -16,7 +16,7 @@ namespace TFSBuildNotifier
         private TaskbarIcon _taskbarIcon;
         private readonly ContextMenu _contextMenu = new ContextMenu();
         private readonly DispatcherTimer _dispatcherTimer = new DispatcherTimer();
-
+        private TfsStatusProvider _statusProvider;
         private List<BuildStatus> _buildStatuses;
         private readonly List<Uri> _uriList = new List<Uri>();
 
@@ -26,7 +26,7 @@ namespace TFSBuildNotifier
             MainWindow = new MainWindow();
             MainWindow.Closing += MainWindow_Closing;
             BuildTaskBarIcon();
-            var statusProvider = new TfsStatusProvider();
+            _statusProvider = new TfsStatusProvider();
             if (e.Args.Length == 0)
             {
                 MessageBox.Show("Invalid command line", ResourceHelper.AppName, MessageBoxButton.OK);
@@ -43,7 +43,7 @@ namespace TFSBuildNotifier
                 MessageBox.Show("Invalid command line", ResourceHelper.AppName, MessageBoxButton.OK);
             }
 
-            AddMenuItems(statusProvider, _uriList);
+            AddMenuItems(_uriList);
             StartTimer();
         }
 
@@ -58,9 +58,7 @@ namespace TFSBuildNotifier
         {
             _dispatcherTimer.Stop();
 
-            var statusProvider = new TfsStatusProvider();
-            var latestStatuses = statusProvider.GetStatusList(_uriList);
-
+            var latestStatuses = _statusProvider.GetStatusList(_uriList);
             foreach (var newStatus in latestStatuses)
             {
                 var oldStatus = _buildStatuses.Single(b => b.Key == newStatus.Key);
@@ -69,7 +67,7 @@ namespace TFSBuildNotifier
                     var title = newStatus.BuildName;
                     var text = newStatus.RequestedBy;
                     _taskbarIcon.ShowBalloonTip(title, text, ResourceHelper.GetIcon(newStatus), true);
-                    //Update the Menu Item 
+
                     foreach (var contextMenuItem in _contextMenu.Items)
                     {
                         var menuItem = contextMenuItem as MenuItem;
@@ -85,9 +83,9 @@ namespace TFSBuildNotifier
             _dispatcherTimer.Start();
         }
 
-        private void AddMenuItems(IBuildStatusProvider statusProvider, List<Uri> uriList)
+        private void AddMenuItems(List<Uri> uriList)
         {
-            _buildStatuses = statusProvider.GetStatusList(uriList);
+            _buildStatuses = _statusProvider.GetStatusList(uriList);
             foreach (var buildStatus in _buildStatuses)
             {
                 var item = new MenuItem();
@@ -123,8 +121,7 @@ namespace TFSBuildNotifier
             };
             MenuItemHelper.SetStartup(launchItem.IsChecked);
             launchItem.Click += LaunchItem_Click;
-            //TODO Enable autolaunch when config is persisted
-            //_contextMenu.Items.Add(launchItem);
+            _contextMenu.Items.Add(launchItem);
 
             _taskbarIcon.ContextMenu = _contextMenu;
         }
