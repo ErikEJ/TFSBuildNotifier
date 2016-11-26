@@ -6,6 +6,8 @@ namespace TFSBuildNotifier
 {
     public class ResourceHelper
     {
+        public static string AppName => "TFS Build Notifier";
+
         public static string GetImageName(BuildStatus buildStatus)
         {
             var imageName = "Resources/StatusHelp_256x.png";
