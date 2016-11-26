@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Hardcodet.Wpf.TaskbarNotification;
 using TFSBuildNotifier.TfsBuildStatusProvider;
@@ -31,7 +29,7 @@ namespace TFSBuildNotifier
             var statusProvider = new TfsStatusProvider();
             if (e.Args.Length == 0)
             {
-                MessageBox.Show("Invalid command line", "TFS Build Notifier", MessageBoxButton.OK);
+                MessageBox.Show("Invalid command line", ResourceHelper.AppName, MessageBoxButton.OK);
             }
             try
             {
@@ -42,7 +40,7 @@ namespace TFSBuildNotifier
             }
             catch (Exception)
             {
-                MessageBox.Show("Invalid command line", "TFS Build Notifier", MessageBoxButton.OK);
+                MessageBox.Show("Invalid command line", ResourceHelper.AppName, MessageBoxButton.OK);
             }
 
             AddMenuItems(statusProvider, _uriList);
@@ -77,13 +75,7 @@ namespace TFSBuildNotifier
                         var menuItem = contextMenuItem as MenuItem;
                         var tag = menuItem?.Tag as Uri;
                         if (tag == null || tag != oldStatus.Key) continue;
-
-                        var imageName = ResourceHelper.GetImageName(newStatus);
-                        menuItem.Icon = new Image
-                        {
-                            Source = new BitmapImage(new Uri(imageName, UriKind.Relative))
-                        };
-                        menuItem.Header = BuildMenuItemHeader(newStatus);
+                        MenuItemHelper.ConfigureMenuItem(menuItem, newStatus);
                     }
                 }
                 oldStatus.Status = newStatus.Status;
@@ -98,33 +90,16 @@ namespace TFSBuildNotifier
             _buildStatuses = statusProvider.GetStatusList(uriList);
             foreach (var buildStatus in _buildStatuses)
             {
-                var imageName = ResourceHelper.GetImageName(buildStatus);
-                var item = new MenuItem
-                {
-                    Icon = new Image
-                    {
-                        Source = new BitmapImage(new Uri(imageName, UriKind.Relative))
-                    },
-                    Header = BuildMenuItemHeader(buildStatus),
-                    Tag = buildStatus.Key
-                };
+                var item = new MenuItem();
+                MenuItemHelper.ConfigureMenuItem(item, buildStatus);
                 item.Click += ItemOnClick;
                 _contextMenu.Items.Insert(0, item);
             }
         }
 
-        private static string BuildMenuItemHeader(BuildStatus buildStatus)
-        {
-            return string.Format("{0} - {1} {2} {3} ({4} sec)", buildStatus.BuildName, buildStatus.RequestedBy, buildStatus.BuildDateTime.ToString("HH:mm"), buildStatus.BuildDateTime.ToShortDateString(), buildStatus.BuildTime.ToString("F0"));
-        }
-
         private void ItemOnClick(object sender, RoutedEventArgs e)
         {
-            var menuItem = sender as MenuItem;
-            var uri = menuItem?.Tag as Uri;
-            if (uri == null) return;
-            var link = _buildStatuses.Where(b => b.Key == uri).Select(b => b.Link).Single();
-            Process.Start(link.ToString());
+            MenuItemHelper.LaunchUrl(sender as MenuItem, _buildStatuses);
         }
 
         private void BuildTaskBarIcon()
@@ -132,14 +107,32 @@ namespace TFSBuildNotifier
             _taskbarIcon = new TaskbarIcon
             {
                 Icon = Resource.BuildSolution,
-                ToolTipText = "TFS Build Notifier",
+                ToolTipText = ResourceHelper.AppName,
                 MenuActivation = PopupActivationMode.LeftOrRightClick
             };
 
             var exitItem = new MenuItem {Header = "Exit"};
             exitItem.Click += ExitItem_Click;
             _contextMenu.Items.Add(exitItem);
+
+            var launchItem = new MenuItem
+            {
+                Header = "Launch at Startup",
+                IsCheckable = true,
+                IsChecked = MenuItemHelper.GetStartupStatus()
+            };
+            MenuItemHelper.SetStartup(launchItem.IsChecked);
+            launchItem.Click += LaunchItem_Click;
+            //TODO Enable autolaunch when config is persisted
+            //_contextMenu.Items.Add(launchItem);
+
             _taskbarIcon.ContextMenu = _contextMenu;
+        }
+
+        private void LaunchItem_Click(object sender, RoutedEventArgs e)
+        {
+            var menuItem = sender as MenuItem;
+            MenuItemHelper.SetStartup(menuItem != null && menuItem.IsChecked);
         }
 
         private void ExitItem_Click(object sender, RoutedEventArgs e)
