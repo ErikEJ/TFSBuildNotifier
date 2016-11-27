@@ -15,11 +15,7 @@ namespace TFSBuildNotifier
     {
         public static void ConfigureMenuItem(MenuItem menuItem, BuildStatus buildStatus)
         {
-            var imageName = ResourceHelper.GetImageName(buildStatus);
-            menuItem.Icon = new Image
-            {
-                Source = new BitmapImage(new Uri(imageName, UriKind.Relative))
-            };
+            menuItem.Icon = GetImageFromResource(ResourceHelper.GetImageName(buildStatus));
             menuItem.Header = BuildMenuItemHeader(buildStatus);
             menuItem.Tag = buildStatus.Key;
         }
@@ -99,7 +95,7 @@ namespace TFSBuildNotifier
                 {
                     wc.Proxy = System.Net.WebRequest.GetSystemWebProxy();
                     var xDoc = new XmlDocument();
-                    var s = wc.DownloadString(@"http://www.sqlcompact.dk/SqlCeToolboxVersions.xml");
+                    var s = wc.DownloadString(@"https://github.com/ErikEJ/TFSBuildNotifier/raw/master/TfsTrayVersion.xml");
                     xDoc.LoadXml(s);
 
                     if (xDoc.DocumentElement != null)
@@ -119,6 +115,20 @@ namespace TFSBuildNotifier
                 // ignored
             }
             return false;
+        }
+
+        public static void LaunchUpdateUrl()
+        {
+            Process.Start("https://ci.appveyor.com/api/projects/ErikEJ/TFSBuildNotifier/artifacts/TfsBuildNotifier.zip?branch=master");
+        }
+
+        public static Image GetImageFromResource(string relativeUriFileName)
+        {
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.UriSource = new Uri(relativeUriFileName, UriKind.Absolute);
+            bitmap.EndInit();
+            return new Image { Source = bitmap };
         }
     }
 }
