@@ -128,22 +128,17 @@
     <Resource Include="Resources\BuildSolution.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\StatusWarning_256x.png" />
     <Resource Include="Resources\StatusWarning.ico" />
     <Resource Include="readme.txt" />
     <Resource Include="Resources\StatusCriticalError.ico" />
     <Resource Include="Resources\StatusHelp.ico" />
-    <Content Include="Resources\StatusHelp_256x.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\StatusCriticalError_256x.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Resource Include="Resources\StatusHelp_256x.png" />
+    <Resource Include="Resources\StatusCriticalError_256x.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\StatusOK.ico" />
-    <Content Include="Resources\StatusOK_256x.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Resource Include="Resources\StatusOK_256x.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

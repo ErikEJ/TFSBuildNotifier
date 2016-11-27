@@ -111,6 +111,12 @@ namespace TFSBuildNotifier
                 MenuActivation = PopupActivationMode.LeftOrRightClick
             };
 
+            BuildStandardMenuItems();
+            _taskbarIcon.ContextMenu = _contextMenu;
+        }
+
+        private void BuildStandardMenuItems()
+        {
             var exitItem = new MenuItem {Header = "Exit"};
             exitItem.Click += ExitItem_Click;
 
@@ -127,8 +133,9 @@ namespace TFSBuildNotifier
             {
                 var newVersionItem = new MenuItem
                 {
-                    Header = "Update available",
-                    Icon = Resource.StatusWarning
+                    Header = "Update available!",
+                    Icon = MenuItemHelper.GetImageFromResource(
+                        "pack://application:,,,/Resources/StatusWarning_256x.png")
                 };
                 newVersionItem.Click += NewVersionItem_Click;
                 _contextMenu.Items.Add(newVersionItem);
@@ -136,12 +143,11 @@ namespace TFSBuildNotifier
 
             _contextMenu.Items.Add(launchItem);
             _contextMenu.Items.Add(exitItem);
-            _taskbarIcon.ContextMenu = _contextMenu;
         }
 
         private void NewVersionItem_Click(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            MenuItemHelper.LaunchUpdateUrl();
         }
 
         private void LaunchItem_Click(object sender, RoutedEventArgs e)

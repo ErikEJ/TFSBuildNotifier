@@ -1,5 +1,5 @@
 ﻿using System.Drawing;
-using Hardcodet.Wpf.TaskbarNotification;
+using System.Windows.Media.Imaging;
 using TFSBuildNotifier.TfsBuildStatusProvider;
 
 namespace TFSBuildNotifier
@@ -10,19 +10,19 @@ namespace TFSBuildNotifier
 
         public static string GetImageName(BuildStatus buildStatus)
         {
-            var imageName = "Resources/StatusHelp_256x.png";
+            var imageName = "StatusHelp_256x.png";
             switch (buildStatus.Status)
             {
                 case Status.Error:
-                    imageName = "Resources/StatusCriticalError_256x.png";
+                    imageName = "StatusCriticalError_256x.png";
                     break;
                 case Status.Success:
-                    imageName = "Resources/StatusOK_256x.png";
+                    imageName = "StatusOK_256x.png";
                     break;
                 case Status.Undetermined:
                     break;
             }
-            return imageName;
+            return "pack://application:,,,/Resources/" + imageName;
         }
 
         public static Icon GetIcon(BuildStatus buildStatus)
