@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using System.Xml;
 using Microsoft.Win32;
 using TFSBuildNotifier.TfsBuildStatusProvider;
 
@@ -90,5 +91,34 @@ namespace TFSBuildNotifier
             return string.Format("{0} - {1} {2} {3} ({4} sec)", buildStatus.BuildName, buildStatus.RequestedBy, buildStatus.BuildDateTime.ToString("HH:mm"), buildStatus.BuildDateTime.ToShortDateString(), buildStatus.BuildTime.ToString("F0"));
         }
 
+        public static bool CheckVersion(string lookingFor = "exe")
+        {
+            try
+            {
+                using (var wc = new System.Net.WebClient())
+                {
+                    wc.Proxy = System.Net.WebRequest.GetSystemWebProxy();
+                    var xDoc = new XmlDocument();
+                    var s = wc.DownloadString(@"http://www.sqlcompact.dk/SqlCeToolboxVersions.xml");
+                    xDoc.LoadXml(s);
+
+                    if (xDoc.DocumentElement != null)
+                    {
+                        var newVersion = xDoc.DocumentElement.Attributes[lookingFor].Value;
+
+                        var vN = new Version(newVersion);
+                        if (vN > Assembly.GetExecutingAssembly().GetName().Version)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                // ignored
+            }
+            return false;
+        }
     }
 }

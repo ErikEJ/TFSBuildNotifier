@@ -30,6 +30,7 @@ namespace TFSBuildNotifier
             if (e.Args.Length == 0)
             {
                 MessageBox.Show("Invalid command line", ResourceHelper.AppName, MessageBoxButton.OK);
+                Current.Shutdown();
             }
             try
             {
@@ -41,6 +42,7 @@ namespace TFSBuildNotifier
             catch (Exception)
             {
                 MessageBox.Show("Invalid command line", ResourceHelper.AppName, MessageBoxButton.OK);
+                Current.Shutdown();
             }
 
             AddMenuItems(_uriList);
@@ -121,9 +123,25 @@ namespace TFSBuildNotifier
             MenuItemHelper.SetStartup(launchItem.IsChecked);
             launchItem.Click += LaunchItem_Click;
 
+            if (MenuItemHelper.CheckVersion())
+            {
+                var newVersionItem = new MenuItem
+                {
+                    Header = "Update available",
+                    Icon = Resource.StatusWarning
+                };
+                newVersionItem.Click += NewVersionItem_Click;
+                _contextMenu.Items.Add(newVersionItem);
+            }
+
             _contextMenu.Items.Add(launchItem);
             _contextMenu.Items.Add(exitItem);
             _taskbarIcon.ContextMenu = _contextMenu;
+        }
+
+        private void NewVersionItem_Click(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         private void LaunchItem_Click(object sender, RoutedEventArgs e)

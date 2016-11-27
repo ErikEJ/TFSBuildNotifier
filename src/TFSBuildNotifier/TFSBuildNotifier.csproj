@@ -125,11 +125,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\BuildSolution.ico">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    <Resource Include="Resources\BuildSolution.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\StatusWarning.ico" />
     <Resource Include="readme.txt" />
     <Resource Include="Resources\StatusCriticalError.ico" />
     <Resource Include="Resources\StatusHelp.ico" />
