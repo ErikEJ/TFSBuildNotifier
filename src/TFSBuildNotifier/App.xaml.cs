@@ -111,7 +111,6 @@ namespace TFSBuildNotifier
 
             var exitItem = new MenuItem {Header = "Exit"};
             exitItem.Click += ExitItem_Click;
-            _contextMenu.Items.Add(exitItem);
 
             var launchItem = new MenuItem
             {
@@ -121,8 +120,9 @@ namespace TFSBuildNotifier
             };
             MenuItemHelper.SetStartup(launchItem.IsChecked);
             launchItem.Click += LaunchItem_Click;
-            _contextMenu.Items.Add(launchItem);
 
+            _contextMenu.Items.Add(launchItem);
+            _contextMenu.Items.Add(exitItem);
             _taskbarIcon.ContextMenu = _contextMenu;
         }
 
