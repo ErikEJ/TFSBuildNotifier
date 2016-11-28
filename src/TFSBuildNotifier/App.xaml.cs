@@ -67,8 +67,7 @@ namespace TFSBuildNotifier
                 if (newStatus.BuildId != oldStatus.BuildId)
                 {
                     var title = newStatus.BuildName;
-                    var text = newStatus.RequestedBy;
-                    _taskbarIcon.ShowBalloonTip(title, text, ResourceHelper.GetIcon(newStatus), true);
+                    _taskbarIcon.ShowBalloonTip(title, MenuItemHelper.BuildBallonBody(newStatus), ResourceHelper.GetIcon(newStatus), true);
 
                     foreach (var contextMenuItem in _contextMenu.Items)
                     {
