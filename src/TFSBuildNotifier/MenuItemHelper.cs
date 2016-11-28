@@ -87,6 +87,11 @@ namespace TFSBuildNotifier
             return string.Format("{0} - {1} {2} {3} ({4} sec)", buildStatus.BuildName, buildStatus.RequestedBy, buildStatus.BuildDateTime.ToString("HH:mm"), buildStatus.BuildDateTime.ToShortDateString(), buildStatus.BuildTime.ToString("F0"));
         }
 
+        public static string BuildBallonBody(BuildStatus buildStatus)
+        {
+            return string.Format("{0}{1}{2} {3} ({4} sec)", buildStatus.RequestedBy, Environment.NewLine, buildStatus.BuildDateTime.ToString("HH:mm"), buildStatus.BuildDateTime.ToShortDateString(), buildStatus.BuildTime.ToString("F0"));
+        }
+
         public static bool CheckVersion(string lookingFor = "exe")
         {
             try
