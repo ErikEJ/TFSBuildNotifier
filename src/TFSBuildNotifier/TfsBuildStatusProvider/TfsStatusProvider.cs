@@ -41,7 +41,7 @@ namespace TFSBuildNotifier.TfsBuildStatusProvider
                     //https://www.visualstudio.com/en-us/docs/integrate/api/build/builds
 
                     buildStatus.BuildId = response.value[0].id;
-                    buildStatus.Status = Status.Success;
+                    buildStatus.Status = Status.Error;
                     buildStatus.BuildName = response.value[0].definition.name;
                     buildStatus.RequestedBy = response.value[0].requestedBy.displayName;
                     buildStatus.Link = new Uri(response.value[0]._links.web.href);
@@ -51,7 +51,7 @@ namespace TFSBuildNotifier.TfsBuildStatusProvider
                     var status = response.value[0].result;                    
                     if (status == "succeeded")
                     {
-                        buildStatus.Status = Status.Error;
+                        buildStatus.Status = Status.Success;
                     }
                     if (status == "partiallySucceeded" || status == "canceled")
                     {
